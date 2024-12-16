@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.elm.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.elm.entity.User">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="username" property="username" jdbcType="VARCHAR" />
+        <result column="password" property="password" jdbcType="VARCHAR" />
+        <result column="email" property="email" jdbcType="VARCHAR" />
+        <result column="avatar" property="avatar" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="DATE" />
+        <result column="last_login_time" property="lastLoginTime" jdbcType="DATE" />
+        <result column="bio" property="bio" jdbcType="VARCHAR" />
+        <result column="update_time" property="updateTime" jdbcType="DATE" />
+        <result column="wechat_account" property="wechatAccount" jdbcType="VARCHAR" />
+        <result column="qq_account" property="qqAccount" jdbcType="VARCHAR" />
+        <result column="is_logged_out" property="isLoggedOut" jdbcType="BOOLEAN" />
+    </resultMap>
+
+    <insert id="createUser" parameterType="com.elm.entity.User">
+        INSERT INTO users (
+            username, password, email, avatar, create_time, bio, update_time, wechat_account, qq_account, is_logged_out,last_login_time
+        ) VALUES (
+                     #{username}, #{password}, #{email}, #{avatar}, #{createTime}, #{bio}, #{updateTime}, #{wechatAccount}, #{qqAccount}, #{isLoggedOut},#{lastLoginTime}
+                 )
+    </insert>
+
+    <update id="updateUser" parameterType="com.elm.entity.User">
+        UPDATE users
+        <set>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="lastLoginTime != null">last_login_time = #{lastLoginTime},</if>
+            <if test="username != null">username = #{username},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+            <if test="bio != null">bio = #{bio},</if>
+            <if test="wechatAccount != null">wechat_account = #{wechatAccount},</if>
+            <if test="qqAccount != null">qq_account = #{qqAccount},</if>
+        </set>
+        WHERE user_id = #{userId}
+    </update>
+
+    <select id="pageQuery" resultType="com.elm.entity.User">
+        select * from users
+        <where>
+            <if test="startTime != null">
+                and create_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and create_time &lt;= #{endTime}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+    <update id="logoutUser" parameterType="java.lang.Integer">
+        UPDATE users SET is_logged_out = 1 WHERE user_id = #{userId}
+    </update>
+</mapper>
